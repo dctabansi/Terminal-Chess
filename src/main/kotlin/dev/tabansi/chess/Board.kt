@@ -73,17 +73,21 @@ object Board {
     }
 
     fun displayBoardAdvanced() {
-        val horizontalLine = "+-----".repeat(8) + "+"
+        var row = 8
+        val horizontalLine = "  " + "+-----".repeat(8) + "+"
+        println("     a     b     c     d     e     f     g     h")
         for (i in 0 until 8) {
             println(horizontalLine)
+            print("$row ")
             for (j in 0 until 8) {
                 print("| ${board[i][j].padEnd(3, ' ')} ")
             }
-            println("|")
+            println("| $row")
+            row--
         }
         println(horizontalLine)
+        println("     a     b     c     d     e     f     g     h\n\n")
     }
-
 }
 
 data class BoardSpace(val x: Int, val y: Int) { // TODO consider adding label: , label: String = ""
