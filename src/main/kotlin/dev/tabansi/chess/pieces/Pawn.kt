@@ -5,7 +5,7 @@ import dev.tabansi.chess.Board.EMPTY
 import dev.tabansi.chess.Board.PLAYER_1
 import dev.tabansi.chess.Board.PLAYER_2
 import dev.tabansi.chess.Board.board
-import dev.tabansi.chess.Board.isEmpty
+import dev.tabansi.chess.Board.isEmptySpace
 import dev.tabansi.chess.BoardSpace
 import dev.tabansi.chess.Player
 
@@ -19,27 +19,27 @@ class Pawn(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
         val y: Int = currentPoint.y
 
         if (player.player == PLAYER_1) {
-            if (x > 0 && isEmpty(x - 1, y)) {
+            if (x > 0 && isEmptySpace(x - 1, y)) {
                 doMove(BoardSpace(x - 1, y))
 
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x - 1, y))
                 undoMove(EMPTY)
 
-                if (x == 6 && isEmpty(x - 2, y)) {
+                if (x == 6 && isEmptySpace(x - 2, y)) {
                     doMove(BoardSpace(x - 2, y))
                     if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x - 2, y))
                     undoMove(EMPTY)
                 }
             }
 
-            if (x > 0 && y < 7 && !isEmpty(x - 1, y + 1) && player.player != board[x - 1][y + 1].takeLast(1)) {
+            if (x > 0 && y < 7 && !isEmptySpace(x - 1, y + 1) && player.player != board[x - 1][y + 1].takeLast(1)) {
                 val piece: String = board[x - 1][y + 1]
                 doMove(BoardSpace(x - 1, y + 1))
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x - 1, y + 1))
                 undoMove(piece)
             }
 
-            if (x > 0 && y > 0 && !isEmpty(x - 1, y - 1) && player.player != board[x - 1][y - 1].takeLast(1)) {
+            if (x > 0 && y > 0 && !isEmptySpace(x - 1, y - 1) && player.player != board[x - 1][y - 1].takeLast(1)) {
                 val piece: String = board[x - 1][y - 1]
                 doMove(BoardSpace(x - 1, y - 1))
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x - 1, y - 1))
@@ -48,26 +48,26 @@ class Pawn(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
         }
 
         else if (player.player == PLAYER_2) {
-            if (x < 7 && isEmpty(x + 1, y)) {
+            if (x < 7 && isEmptySpace(x + 1, y)) {
                 doMove(BoardSpace(x + 1, y))
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x + 1, y))
                 undoMove(EMPTY)
 
-                if (x == 1 && isEmpty(x + 2, y)) {
+                if (x == 1 && isEmptySpace(x + 2, y)) {
                     doMove(BoardSpace(x + 2, y))
                     if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x + 2, y))
                     undoMove(EMPTY)
                 }
             }
 
-            if (x < 7 && y < 7 && !isEmpty(x + 1, y + 1) && player.player != board[x + 1][y + 1].takeLast(1)) {
+            if (x < 7 && y < 7 && !isEmptySpace(x + 1, y + 1) && player.player != board[x + 1][y + 1].takeLast(1)) {
                 val piece: String = board[x + 1][y + 1]
                 doMove(BoardSpace(x + 1, y + 1))
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x + 1, y + 1))
                 undoMove(piece)
             }
 
-            if (x < 7 && y > 0 && !isEmpty(x + 1, y - 1) && player.player != board[x + 1][y - 10].takeLast(1)) {
+            if (x < 7 && y > 0 && !isEmptySpace(x + 1, y - 1) && player.player != board[x + 1][y - 10].takeLast(1)) {
                 val piece: String = board[x + 1][y - 1]
                 doMove(BoardSpace(x + 1, y - 1))
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x + 1, y - 1))

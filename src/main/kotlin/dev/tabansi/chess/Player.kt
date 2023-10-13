@@ -2,9 +2,9 @@ package dev.tabansi.chess
 
 import dev.tabansi.chess.pieces.*
 
-class Player(player: String) {
+class Player(val player: String) {
 
-    val player: String = player
+    //val player: String = player
     private val pieces: Array<Piece?> = arrayOfNulls(16)
     val king: King
         get() = pieces[12] as King
@@ -67,7 +67,7 @@ class Player(player: String) {
         return availableMoves
     }
 
-    fun killPiece(piece: Piece) {
+    fun killPiece(piece: Piece?) {
         for (i in 0 until 16) {
             if (pieces[i]!!.active && pieces[i] == piece) {
                 pieces[i]!!.active = false

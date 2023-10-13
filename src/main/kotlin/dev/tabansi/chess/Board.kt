@@ -2,12 +2,12 @@ package dev.tabansi.chess
 
 object Board {
 
-    const val PAWN = "PA"
-    const val ROOK = "RO"
-    const val KNIGHT = "KN"
-    const val BISHOP = "BI"
-    const val QUEEN = "QU"
-    const val KING = "KI"
+    const val KING = "KG"
+    const val QUEEN = "QN"
+    const val ROOK = "RK"
+    const val BISHOP = "BP"
+    const val KNIGHT = "KT"
+    const val PAWN = "PN"
     const val PLAYER_1 = "1"
     const val PLAYER_2 = "2"
     const val EMPTY = " - "
@@ -38,7 +38,7 @@ object Board {
         board[7][7 - i] = piece + PLAYER_1
     }
 
-    fun isEmpty(x: Int, y: Int): Boolean = board[x][y] == EMPTY
+    fun isEmptySpace(x: Int, y: Int): Boolean = board[x][y] == EMPTY
 
     fun displayBoard() {
         var row = 8
@@ -59,7 +59,7 @@ object Board {
     fun displayBoardLarge() {
         var row = 8
         println()
-        println("\ta\t\tb\t\tc\t\td\t\te\t\tf\t\tg\t\th")
+        println("     a\t\tb\t\tc\t\td\t\te\t\tf\t\tg\t\th")
         for (i in 0 until 8) {
             print(row.toString() + "\t")
             for (j in 0 until 8) {
@@ -69,7 +69,7 @@ object Board {
             row--
             println("\n")
         }
-        println("\ta\t\tb\t\tc\t\td\t\te\t\tf\t\tg\t\th\n\n")
+        println("     a\t\tb\t\tc\t\td\t\te\t\tf\t\tg\t\th\n\n")
     }
 
     fun displayBoardAdvanced() {
@@ -82,14 +82,44 @@ object Board {
             for (j in 0 until 8) {
                 print("| ${board[i][j].padEnd(3, ' ')} ")
             }
-            println("| $row")
+            print("| $row ")
+            printLegend(row)
             row--
         }
         println(horizontalLine)
-        println("     a     b     c     d     e     f     g     h\n\n")
+        println("     a     b     c     d     e     f     g     h\n")
+    }
+
+    fun displayWithCoords() {
+        var row = 8
+        println()
+        println("\t a\t     b\t     c\t     d\t     e\t     f\t     g\t     h")
+        for (i in 0 until 8) {
+            print(row.toString() + "\t")
+            for (j in 0 until 8) {
+                print("($i,$j)\t")
+            }
+            print(row.toString() + "\t")
+            row--
+            println()
+        }
+        println("\t a\t     b\t     c\t     d\t     e\t     f\t     g\t     h\n\n")
+    }
+
+    private fun printLegend(row: Int) {
+        when (row) {
+            8 -> println("\t Legend: ")
+            7 -> println("\t\tKG = King")
+            6 -> println("\t\tQN = Queen")
+            5 -> println("\t\tRK = Rook")
+            4 -> println("\t\tBP = Bishop")
+            3 -> println("\t\tKT = Knight")
+            2 -> println("\t\tPN = Pawn")
+            1 -> println("\t\t1 / 2 postfix relates pieces to players")
+        }
     }
 }
 
 data class BoardSpace(val x: Int, val y: Int) { // TODO consider adding label: , label: String = ""
-    override fun toString(): String = "[$x,$y]"
+    override fun toString(): String = "[$x, $y]"
 }
