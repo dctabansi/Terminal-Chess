@@ -17,7 +17,7 @@ class Game {
     private var currentPiece: Piece? = null
     private var lastKilledPiece: Piece? = null
     private var castled = false
-    //private var gameOver = false
+
     private var turnTracker = 0
     private var turnsSinceUndo = 0
 
@@ -117,7 +117,9 @@ class Game {
                     continue
                 }
                 println("\nThese are the available moves:")
-                availableMoves.forEach { println(coordToLabel(it.x, it.y)) }
+                availableMoves
+                    .sortedBy { coordToLabel(it.x, it.y) }
+                    .forEach { println(coordToLabel(it.x, it.y)) }
                 print("Enter coordinates of selected choice: ")
                 val choice = readln()
                 val pair = labelToCoord(choice)
@@ -125,7 +127,7 @@ class Game {
                 y = pair.second
 
                 if (availableMoves.contains(BoardSpace(x, y))) {
-                    if (isEmptySpace(x, y)) {
+                    if (!isEmptySpace(x, y)) {
                         currentPiece!!.doMove(BoardSpace(x, y))
                         if (turnTracker % 2 == 0) {
                             lastKilledPiece = player2.getPiece(BoardSpace(x, y))
@@ -198,6 +200,7 @@ class Game {
                 println("\n\nCHECK!!")
 
         }
+
         if (turnTracker % 2 == 0) println("\nPLAYER 2 HAS WON\n")
         else println("\nPLAYER 1 HAS WON\n")
     }
@@ -210,7 +213,7 @@ class Game {
         if (input == null) return false
         if (input == "undo") return true
         if (input.length != 2) return false
-        if (input[0] !in 'a'..'h' || input[1] !in '1'..'8') return false
+        if (input[0].lowercaseChar() !in 'a'..'h' || input[1] !in '1'..'8') return false
         return true
     }
 
@@ -221,9 +224,9 @@ class Game {
     }
 
     private fun coordToLabel(x: Int, y: Int): String {
-        val col = (y + 'a'.code)
+        val col = (y + 'a'.code).toChar()
         val row = 8 - x
-        return "$col$row"
+        return "$col$row".uppercase()
     }
 
     private fun promotePawns(x: Int, y: Int, player: Player) {

@@ -67,7 +67,7 @@ class Pawn(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
                 undoMove(piece)
             }
 
-            if (x < 7 && y > 0 && !isEmptySpace(x + 1, y - 1) && player.player != board[x + 1][y - 10].takeLast(1)) {
+            if (x < 7 && y > 0 && !isEmptySpace(x + 1, y - 1) && player.player != board[x + 1][y - 1].takeLast(1)) {
                 val piece: String = board[x + 1][y - 1]
                 doMove(BoardSpace(x + 1, y - 1))
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x + 1, y - 1))

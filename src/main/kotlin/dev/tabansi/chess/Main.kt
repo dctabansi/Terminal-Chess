@@ -1,15 +1,16 @@
 package dev.tabansi.chess
 
 fun main() {
-    Game().startGame()
-//    Board.setInitialBoard()
+
+    Board.setInitialBoard()
     Board.displayWithCoords()
-    Board.displayBoardAdvanced()
+//    Board.displayBoardAdvanced()
 //
-////    println(labelToCoord("a1"))
-////    println(coordToLabel(Pair(8, 1)))
+//    println(labelToCoord("a1"))
+//    println(coordToLabel(7, 0))
 //    val (x, y) = labelToCoord("a1")
 //    println(Board.isEmptySpace(x, y))
+    Game().startGame()
 }
 
 fun labelToCoord(label: String): Pair<Int, Int> {
@@ -18,8 +19,8 @@ fun labelToCoord(label: String): Pair<Int, Int> {
     return Pair(row, col)
 }
 
-fun coordToLabel(coord: Pair<Int, Int>): String {
-    val col = (coord.second + 'a'.code).toChar()
-    val row = 8 - coord.first
+fun coordToLabel(x: Int, y: Int): String {
+    val col = (y + 'a'.code).toChar()
+    val row = 8 - x
     return "$col$row"
 }
