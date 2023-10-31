@@ -11,6 +11,7 @@ class Bishop(currentPoint: BoardSpace, player: Player): Piece(currentPoint, play
 
     override val pieceConstant: String
         get() = Board.BISHOP
+
     override fun getMoves(): List<BoardSpace> {
         val availableMoves = mutableListOf<BoardSpace>()
         var x: Int = currentPoint.x

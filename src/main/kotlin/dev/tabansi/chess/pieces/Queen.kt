@@ -59,7 +59,7 @@ class Queen(currentPoint: BoardSpace, player: Player): Piece(currentPoint, playe
             y++
         }
 
-        if (y < 7 && player.player == Board.board[x][y + 1].takeLast(1)) {
+        if (y < 7 && player.player != Board.board[x][y + 1].takeLast(1)) {
             val piece: String = Board.board[x][y + 1]
             doMove(BoardSpace(x, y + 1))
             if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x, y + 1))
@@ -72,10 +72,10 @@ class Queen(currentPoint: BoardSpace, player: Player): Piece(currentPoint, playe
             doMove(BoardSpace(x, y - 1))
             if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x, y - 1))
             undoMove(Board.EMPTY)
-            y++
+            y--
         }
 
-        if (y > 0 && player.player == Board.board[x][y - 1].takeLast(1)) {
+        if (y > 0 && player.player != Board.board[x][y - 1].takeLast(1)) {
             val piece: String = Board.board[x][y - 1]
             doMove(BoardSpace(x, y - 1))
             if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x, y - 1))
