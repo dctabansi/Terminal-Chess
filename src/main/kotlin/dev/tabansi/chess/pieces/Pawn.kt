@@ -45,9 +45,7 @@ class Pawn(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x - 1, y - 1))
                 undoMove(piece)
             }
-        }
-
-        else if (player.player == PLAYER_2) {
+        } else if (player.player == PLAYER_2) {
             if (x < 7 && isEmptySpace(x + 1, y)) {
                 doMove(BoardSpace(x + 1, y))
                 if (!player.king.isInCheck()) availableMoves.add(BoardSpace(x + 1, y))

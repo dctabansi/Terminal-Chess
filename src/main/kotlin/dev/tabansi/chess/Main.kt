@@ -11,6 +11,7 @@ fun main() {
 //    val (x, y) = labelToCoord("a1")
 //    println(Board.isEmptySpace(x, y))
     Game().startGame()
+//    println("♔")
 }
 
 fun labelToCoord(label: String): Pair<Int, Int> {

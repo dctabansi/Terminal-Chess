@@ -5,10 +5,11 @@ import dev.tabansi.chess.Board.PLAYER_1
 import dev.tabansi.chess.Board.PLAYER_2
 import dev.tabansi.chess.Board.ROOK
 import dev.tabansi.chess.Board.board
-import dev.tabansi.chess.Board.displayBoardAdvanced
+import dev.tabansi.chess.Board.displayBoard
 import dev.tabansi.chess.Board.isEmptySpace
 import dev.tabansi.chess.Board.setInitialBoard
 import dev.tabansi.chess.pieces.*
+import kotlin.system.exitProcess
 
 class Game {
 
@@ -23,80 +24,43 @@ class Game {
 
     fun startGame() {
         setInitialBoard()
-         while (!gameOver()) {
-            displayBoardAdvanced()
-            if (turnTracker % 2 == 0)
-                println("It's Player 1's Turn!\n")
-            else
-                println("It's Player 2's Turn!\n")
-            if (turnTracker > 0) println("Enter \"UNDO\" to undo the last move.")
+        displayBoard()
+        while (!gameOver() && !stalemate()) {
+            //displayBoard()
 
-            print("Enter coordinates of selected piece: ")
-            val input = readlnOrNull()
+            if (turnTracker % 2 == 0) println("Player One's turn")
+            else println("Player Two's turn")
 
-            if (!confirmInput(input)) {
+            if (turnTracker > 0) println("Enter \"UNDO\" to undo the most recent move.")
+
+            print("Choose your piece: ")
+            val inputOrNull: String? = readlnOrNull()
+
+            if (inputOrNull == null) {
                 println("Please enter a valid coordinate.")
                 continue
             }
 
-            if (input!!.lowercase() == "undo") {
-                if (turnTracker <= 0) {
-                    println("You can't undo right now. Please enter a valid coordinate.")
-                    continue
-                }
+            val input: String = inputOrNull.lowercase()
 
-                if (turnsSinceUndo == 0) {
-                    println("\n\nYou can only undo once!\n")
-                }
-
-                if (lastKilledPiece != null) {
-                    if (turnTracker % 2 == 0) {
-                        currentPiece!!.undoMove(lastKilledPiece!!.pieceConstant + player1.player)
-                        player1.revivePiece(lastKilledPiece!!)
-                    }
-
-                    else {
-                        currentPiece!!.undoMove(lastKilledPiece!!.pieceConstant + player2.player)
-                        player2.revivePiece(lastKilledPiece!!)
-                    }
-                }
-
-                else {
-                    currentPiece!!.undoMove(EMPTY)
-                    if (currentPiece is King) (currentPiece as King).hasMoved = false
-                    if (currentPiece is Rook) (currentPiece as Rook).hasMoved = false
-
-                    if (castled) {
-                        if (turnTracker % 2 == 1) {
-                            if (board[7][5] == ROOK + PLAYER_1) {
-                                (player1.getPiece(BoardSpace(7, 5)) as Rook).hasMoved = false
-                                (player1.getPiece(BoardSpace(7, 5)) as Rook).undoMove(EMPTY)
-                            }
-                            else if (board[7][3] == ROOK + PLAYER_1) {
-                                (player1.getPiece(BoardSpace(7, 3)) as Rook).hasMoved = false
-                                (player1.getPiece(BoardSpace(7, 3)) as Rook).undoMove(EMPTY)
-                            }
-                        }
-                        else {
-                            if (board[0][5] == ROOK + PLAYER_2) {
-                                (player1.getPiece(BoardSpace(0, 5)) as Rook).hasMoved = false
-                                (player1.getPiece(BoardSpace(0, 5)) as Rook).undoMove(EMPTY)
-                            }
-                            else if (board[0][3] == ROOK + PLAYER_2) {
-                                (player1.getPiece(BoardSpace(0, 3)) as Rook).hasMoved = false
-                                (player1.getPiece(BoardSpace(0, 3)) as Rook).undoMove(EMPTY)
-                            }
-                        }
-                    }
-                }
-                turnTracker--
-                turnsSinceUndo--
+            if (input == "exit") {
+                println("Stopping game...")
+                exitProcess(0)
+            }
+            if (!confirmInput(input)) {
+                println("Please enter a valid coordinate.")
+                continue
+            }
+            if (input == "undo") {
+                // TODO check this
+                undo()
+                continue
             }
 
-            var (x, y) = labelToCoord(input.lowercase())
+            var (x, y) = labelToCoord(input)
 
             if (isEmptySpace(x, y)) {
-                println("This is an empty space. Please enter a valid coordinate.")
+                println("This is an empty space.\nPlease enter a valid coordinate.")
                 continue
             }
 
@@ -106,114 +70,143 @@ class Game {
                 player2.getPiece(BoardSpace(x, y))
 
             if (currentPiece == null) {
-                println("Please choose your own piece.")
+                println("Please choose your own piece")
                 continue
-            }
+            } else {
 
-            else {
                 val availableMoves = currentPiece!!.getMoves()
+
                 if (availableMoves.isEmpty()) {
                     println("There are no available moves for this piece.")
                     continue
                 }
+
                 println("\nThese are the available moves:")
-                availableMoves
-                    .sortedBy { coordToLabel(it.x, it.y) }
-                    .forEach { println(coordToLabel(it.x, it.y)) }
-                print("Enter coordinates of selected choice: ")
-                val choice = readln()
-                val pair = labelToCoord(choice)
+                println(
+                    availableMoves
+                        .sortedBy { coordToLabel(it.x, it.y) }
+                        .joinToString(" ") { coordToLabel(it.x, it.y) }
+                )
+                print("Enter the destination coordinate: ")
+                val destInputOrNull = readlnOrNull()
+
+                if (destInputOrNull == null) {
+                    println("Please enter a valid coordinate.")
+                    continue
+                }
+
+                val destInput = destInputOrNull.lowercase()
+
+                if (destInput == "exit") {
+                    println("Stopping game...")
+                    exitProcess(0)
+                }
+                if (!confirmInput(destInput)) {
+                    println("Please enter a valid coordinate.")
+                    continue
+                }
+                if (destInput == "undo") {
+                    turnsSinceUndo = 0
+                    continue
+                }
+
+                val pair: Pair<Int, Int> = labelToCoord(destInput)
                 x = pair.first
                 y = pair.second
 
-                if (availableMoves.contains(BoardSpace(x, y))) {
-                    if (!isEmptySpace(x, y)) {
-                        currentPiece!!.doMove(BoardSpace(x, y))
-                        if (turnTracker % 2 == 0) {
-                            lastKilledPiece = player2.getPiece(BoardSpace(x, y))
-                            player2.killPiece(lastKilledPiece)
-                            castled = false
-                            if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 0)
-                                promotePawns(x, y, player1)
-                        }
+                if (!availableMoves.contains(BoardSpace(x, y))) {
+                    println("Please enter a valid move.")
+                    continue
+                }
 
-                        else {
-                            lastKilledPiece = player1.getPiece(BoardSpace(x, y))
-                            player1.killPiece(lastKilledPiece)
-                            castled = false
-                            if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 7)
-                                promotePawns(x, y, player2)
-                        }
-                        turnTracker++
-                    }
-
-                    else {
-                        lastKilledPiece = null
-                        currentPiece!!.doMove(BoardSpace(x, y))
+                if (!isEmptySpace(x, y)) {
+                    currentPiece!!.doMove(BoardSpace(x, y))
+                    if (turnTracker % 2 == 0) {
+                        lastKilledPiece = player2.getPiece(BoardSpace(x, y))
+                        player2.killPiece(lastKilledPiece)
                         castled = false
+                        if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 0)
+                            promotePawn(x, y, player1)
+                    } else {
+                        lastKilledPiece = player1.getPiece(BoardSpace(x, y))
+                        player1.killPiece(lastKilledPiece)
+                        castled = false
+                        if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 7)
+                            promotePawn(x, y, player2)
+                    }
+                    turnTracker++
+                } else {
+                    lastKilledPiece = null
+                    currentPiece!!.doMove(BoardSpace(x, y))
+                    castled = false
 
-                        if (currentPiece is King) {
-                            if (turnTracker % 2 == 0 && x == 7 && y == 6) {
-                                player1.getPiece(BoardSpace(7, 7))!!.doMove(BoardSpace(7, 5))
-                                (player1.getPiece(BoardSpace(7, 5)) as Rook).hasMoved = true
-                                castled = true
-                            }
-
-                            if (turnTracker % 2 == 0 && x == 7 && y == 2) {
-                                player1.getPiece(BoardSpace(7, 0))!!.doMove(BoardSpace(7, 3))
-                                (player1.getPiece(BoardSpace(7, 3)) as Rook).hasMoved = true
-                                castled = true
-                            }
-
-                            if (turnTracker % 2 == 1 && x == 0 && y == 6) {
-                                player2.getPiece(BoardSpace(0, 7))!!.doMove(BoardSpace(0, 5))
-                                (player2.getPiece(BoardSpace(0, 5)) as Rook).hasMoved = true
-                                castled = true
-                            }
-
-                            if (turnTracker % 2 == 1 && x == 7 && y == 6) {
-                                player2.getPiece(BoardSpace(0, 0))!!.doMove(BoardSpace(0, 3))
-                                (player2.getPiece(BoardSpace(0, 3)) as Rook).hasMoved = true
-                                castled = true
-                            }
-
-                            (currentPiece as King).hasMoved = true
-
+                    if (currentPiece is King) {
+                        if (turnTracker % 2 == 0 && x == 7 && y == 6) {
+                            player1.getPiece(BoardSpace(7, 7))!!.doMove(BoardSpace(7, 5))
+                            (player1.getPiece(BoardSpace(7, 5)) as Rook).hasMoved = true
+                            castled = true
                         }
 
-                        if (currentPiece is Rook)
-                            (currentPiece as Rook).hasMoved = true
+                        if (turnTracker % 2 == 0 && x == 7 && y == 2) {
+                            player1.getPiece(BoardSpace(7, 0))!!.doMove(BoardSpace(7, 3))
+                            (player1.getPiece(BoardSpace(7, 3)) as Rook).hasMoved = true
+                            castled = true
+                        }
 
-                        if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 0)
-                            promotePawns(x, y, player1)
+                        if (turnTracker % 2 == 1 && x == 0 && y == 6) {
+                            player2.getPiece(BoardSpace(0, 7))!!.doMove(BoardSpace(0, 5))
+                            (player2.getPiece(BoardSpace(0, 5)) as Rook).hasMoved = true
+                            castled = true
+                        }
 
-                        if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 7)
-                            promotePawns(x, y, player2)
+                        if (turnTracker % 2 == 1 && x == 0 && y == 2) {
+                            player2.getPiece(BoardSpace(0, 0))!!.doMove(BoardSpace(0, 3))
+                            (player2.getPiece(BoardSpace(0, 3)) as Rook).hasMoved = true
+                            castled = true
+                        }
 
-                        turnTracker++
-                        turnsSinceUndo++
+                        (currentPiece as King).hasMoved = true
+
                     }
+
+                    if (currentPiece is Rook)
+                        (currentPiece as Rook).hasMoved = true
+
+                    if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 0)
+                        promotePawn(x, y, player1)
+
+                    if (currentPiece is Pawn && currentPiece!!.currentPoint.x == 7)
+                        promotePawn(x, y, player2)
+
+                    turnTracker++
+                    turnsSinceUndo++
+
                 }
             }
 
             if (turnTracker % 2 == 0 && player2.king.isInCheck() || turnTracker % 2 == 1 && player1.king.isInCheck())
-                println("\n\nCHECK!!")
-
+                println("\n\nCheck!!!")
+            displayBoard()
         }
-
-        if (turnTracker % 2 == 0) println("\nPLAYER 2 HAS WON\n")
-        else println("\nPLAYER 1 HAS WON\n")
+        println(
+            if (turnTracker % 2 == 0)
+                "\nPlayer Two has won!!!"
+            else
+                "\nPlayer One has won!!!"
+        )
     }
 
     private fun gameOver(): Boolean {
         val currentPlayer = if (turnTracker % 2 == 0) player1 else player2
         return currentPlayer.getMoves().isEmpty()
     }
-    private fun confirmInput(input: String?): Boolean {
-        if (input == null) return false
+
+    private fun stalemate(): Boolean = player1.getMoves().isEmpty() && player2.getMoves().isEmpty()
+
+    private fun confirmInput(input: String): Boolean {
         if (input == "undo") return true
         if (input.length != 2) return false
-        if (input[0].lowercaseChar() !in 'a'..'h' || input[1] !in '1'..'8') return false
+        if (input[0] !in 'a'..'h' || input[1] !in '1'..'8') return false
         return true
     }
 
@@ -229,7 +222,7 @@ class Game {
         return "$col$row".uppercase()
     }
 
-    private fun promotePawns(x: Int, y: Int, player: Player) {
+    private fun promotePawn(x: Int, y: Int, player: Player) {
         val options = mapOf(
             "q" to { Queen(BoardSpace(x, y), player) },
             "queen" to { Queen(BoardSpace(x, y), player) },
@@ -242,7 +235,8 @@ class Game {
         )
 
         while (true) {
-            print("""
+            print(
+                """
             What do you want to promote to?
             "Q": Queen
             "R": Rook
@@ -250,7 +244,8 @@ class Game {
             "K": Knight
             
             Choice: 
-            """.trimIndent())
+            """.trimIndent()
+            )
 
             val input = readlnOrNull()?.lowercase()
             if (input != null && input in options.keys) {
@@ -260,4 +255,50 @@ class Game {
             println("Please enter a valid option.")
         }
     }
+
+    private fun undo() {
+        if (turnTracker <= 0)
+            println("You can't undo right now. Please enter a valid coordinate.")
+
+        if (turnsSinceUndo == 0)
+            println("\n\nYou can only undo once!\n")
+
+        if (lastKilledPiece != null) {
+            if (turnTracker % 2 == 0) {
+                currentPiece!!.undoMove(lastKilledPiece!!.pieceConstant + player1.player)
+                player1.revivePiece(lastKilledPiece!!)
+            } else {
+                currentPiece!!.undoMove(lastKilledPiece!!.pieceConstant + player2.player)
+                player2.revivePiece(lastKilledPiece!!)
+            }
+        } else {
+            currentPiece!!.undoMove(EMPTY)
+            if (currentPiece is King) (currentPiece as King).hasMoved = false
+            if (currentPiece is Rook) (currentPiece as Rook).hasMoved = false
+
+            if (castled) {
+                if (turnTracker % 2 == 1) {
+                    if (board[7][5] == ROOK + PLAYER_1) {
+                        (player1.getPiece(BoardSpace(7, 5)) as Rook).hasMoved = false
+                        (player1.getPiece(BoardSpace(7, 5)) as Rook).undoMove(EMPTY)
+                    } else if (board[7][3] == ROOK + PLAYER_1) {
+                        (player1.getPiece(BoardSpace(7, 3)) as Rook).hasMoved = false
+                        (player1.getPiece(BoardSpace(7, 3)) as Rook).undoMove(EMPTY)
+                    }
+                } else {
+                    if (board[0][5] == ROOK + PLAYER_2) {
+                        (player1.getPiece(BoardSpace(0, 5)) as Rook).hasMoved = false
+                        (player1.getPiece(BoardSpace(0, 5)) as Rook).undoMove(EMPTY)
+                    } else if (board[0][3] == ROOK + PLAYER_2) {
+                        (player1.getPiece(BoardSpace(0, 3)) as Rook).hasMoved = false
+                        (player1.getPiece(BoardSpace(0, 3)) as Rook).undoMove(EMPTY)
+                    }
+                }
+            }
+        }
+        turnTracker--
+        turnsSinceUndo = 0
+        displayBoard()
+    }
+
 }

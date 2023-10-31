@@ -42,40 +42,8 @@ object Board {
 
     fun displayBoard() {
         var row = 8
-        println()
-        println("\ta\tb\tc\td\te\tf\tg\th")
-        for (i in 0 until 8) {
-            print(row.toString() + "\t")
-            for (j in 0 until 8) {
-                print(board[i][j] + "\t")
-            }
-            print(row.toString() + "\t")
-            row--
-            println()
-        }
-        println("\ta\tb\tc\td\te\tf\tg\th\n\n")
-    }
-
-    fun displayBoardLarge() {
-        var row = 8
-        println()
-        println("     a\t\tb\t\tc\t\td\t\te\t\tf\t\tg\t\th")
-        for (i in 0 until 8) {
-            print(row.toString() + "\t")
-            for (j in 0 until 8) {
-                print(board[i][j] + "\t\t")
-            }
-            print(row.toString() + "\t")
-            row--
-            println("\n")
-        }
-        println("     a\t\tb\t\tc\t\td\t\te\t\tf\t\tg\t\th\n\n")
-    }
-
-    fun displayBoardAdvanced() {
-        var row = 8
         val horizontalLine = "  " + "+-----".repeat(8) + "+"
-        println("     A     B     C     D     E     F     G     H")
+        println("     a     b     c     d     e     f     g     h")
         for (i in 0 until 8) {
             println(horizontalLine)
             print("$row ")
@@ -87,7 +55,7 @@ object Board {
             row--
         }
         println(horizontalLine)
-        println("     A     B     C     D     E     F     G     H\n")
+        println("     a     b     c     d     e     f     g     h\n")
     }
 
     fun displayWithCoords() {
@@ -103,7 +71,7 @@ object Board {
             row--
             println()
         }
-        println("\t A\t     B\t     C\t     D\t     E\t     F\t     G\t     H\n\n")
+        println("\t a\t     b\t     c\t     d\t     e\t     F\t     g\t     h\n\n")
     }
 
     private fun printLegend(row: Int) {
