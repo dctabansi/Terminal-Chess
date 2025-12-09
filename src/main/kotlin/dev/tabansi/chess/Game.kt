@@ -43,7 +43,7 @@ class Game {
 
             val input: String = inputOrNull.lowercase()
 
-            if (input == "exit") {
+            if (input == "exit" || input == "quit") {
                 println("Stopping game...")
                 exitProcess(0)
             }

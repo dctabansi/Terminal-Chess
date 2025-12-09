@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build (JDK 25 on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+
+      # Use wrapper if present; otherwise fall back to provisioned Gradle 9.2.1
+      - name: Make gradlew executable (non-Windows)
+        if: hashFiles('gradlew') != '' && runner.os != 'Windows'
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle Wrapper (Unix)
+        if: hashFiles('gradlew') != '' && runner.os != 'Windows'
+        run: |
+          ./gradlew --version
+          ./gradlew build --no-daemon
+          ./gradlew shadowJar --no-daemon
+
+      - name: Build with Gradle Wrapper (Windows)
+        if: hashFiles('gradlew.bat') != '' && runner.os == 'Windows'
+        run: |
+          ./gradlew.bat --version
+          ./gradlew.bat build --no-daemon
+          ./gradlew.bat shadowJar --no-daemon
+
+      - name: Set up Gradle 9.2.1 (fallback when no wrapper)
+        if: hashFiles('gradlew') == '' && hashFiles('gradlew.bat') == ''
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+
+      - name: Build with Gradle CLI (fallback)
+        if: hashFiles('gradlew') == '' && hashFiles('gradlew.bat') == ''
+        run: |
+          gradle --version
+          gradle build --no-daemon
+          gradle shadowJar --no-daemon
+
+      - name: Upload runnable JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: terminalchess-${{ matrix.os }}-jdk25
+          path: |
+            build/libs/*all.jar
