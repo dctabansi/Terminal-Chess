@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ main, master ]
 
+# Ensure only the latest run per branch/PR remains active.
+# This reduces duplicate notifications when pushing multiple commits quickly.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build (JDK 25 on ${{ matrix.os }})
