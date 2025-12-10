@@ -1,0 +1,12 @@
+[versions]
+kotlin = "2.3.0-RC3"
+junit = "6.1.0-M1"
+shadow = "9.3.0"
+
+[libraries]
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }

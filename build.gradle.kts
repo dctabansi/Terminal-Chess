@@ -1,7 +1,8 @@
 plugins {
-    kotlin("jvm") version "2.3.0-RC2"
     application
-    id("com.gradleup.shadow") version "9.3.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.versions)
 }
 
 group = "dev.tabansi"
@@ -17,8 +18,8 @@ dependencies {
 
     // Testing
     testImplementation(kotlin("test"))
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
+    testImplementation(kotlin("test-junit5"))
+    testImplementation(libs.junit.jupiter)
 }
 
 application {

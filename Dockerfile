@@ -4,9 +4,10 @@
 FROM eclipse-temurin:25-jdk AS build
 WORKDIR /workspace
 
-# Copy wrapper and build files first to leverage Docker cache
+# Copy wrapper, build, and version catalog files first to leverage Docker cache
 COPY gradlew gradlew.bat ./
 COPY gradle/wrapper ./gradle/wrapper
+COPY gradle/libs.versions.toml ./gradle/libs.versions.toml
 COPY settings.gradle.kts build.gradle.kts ./
 
 # Verify wrapper and warm up dependencies

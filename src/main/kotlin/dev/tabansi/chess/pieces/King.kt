@@ -6,6 +6,7 @@ import dev.tabansi.chess.Board.KING
 import dev.tabansi.chess.Board.KNIGHT
 import dev.tabansi.chess.Board.PAWN
 import dev.tabansi.chess.Board.PLAYER_1
+import dev.tabansi.chess.Board.PLAYER_2
 import dev.tabansi.chess.Board.QUEEN
 import dev.tabansi.chess.Board.ROOK
 import dev.tabansi.chess.Board.board
@@ -59,7 +60,7 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             } else if (!player.king.isInCheck() && y < 6 && isEmptySpace(x, y + 2) && currentPoint == BoardSpace(
                     0,
                     4
-                ) && !hasMoved && board[0][7] == ROOK + PLAYER_1
+                ) && !hasMoved && board[0][7] == ROOK + PLAYER_2
             ) {
                 val rook = player.getPiece(BoardSpace(0, 7)) as Rook
                 if (!rook.hasMoved) {
@@ -94,7 +95,7 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             } else if (!player.king.isInCheck() && y > 1 && isEmptySpace(x, y - 2) && currentPoint == BoardSpace(
                     0,
                     4
-                ) && !hasMoved && board[7][0] == ROOK + PLAYER_1
+                ) && !hasMoved && board[0][0] == ROOK + PLAYER_2
             ) {
                 val rook = player.getPiece(BoardSpace(0, 0)) as Rook
                 if (!rook.hasMoved) {
@@ -200,10 +201,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             y++
         }
 
-        if (x < 7 && y < 7 && player.player != board[x + 1][y + 1].takeLast(1) && (board[x + 1][y + 1].substring(
-                0,
-                1
-            ) == QUEEN || board[x + 1][y + 1].substring(0, 1) == BISHOP)
+        if (x < 7 && y < 7 && player.player != board[x + 1][y + 1].takeLast(1) &&
+            (board[x + 1][y + 1].startsWith(QUEEN) || board[x + 1][y + 1].startsWith(BISHOP))
         )
             return true
 
@@ -215,10 +214,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             y--
         }
 
-        if (x < 7 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) && (board[x + 1][y - 1].substring(
-                0,
-                1
-            ) == QUEEN || board[x + 1][y - 1].substring(0, 1) == BISHOP)
+        if (x < 7 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) &&
+            (board[x + 1][y - 1].startsWith(QUEEN) || board[x + 1][y - 1].startsWith(BISHOP))
         )
             return true
 
@@ -230,10 +227,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             y--
         }
 
-        if (x > 0 && y > 0 && player.player != board[x - 1][y - 1].takeLast(1) && (board[x - 1][y - 1].substring(
-                0,
-                1
-            ) == QUEEN || board[x - 1][y - 1].substring(0, 1) == BISHOP)
+        if (x > 0 && y > 0 && player.player != board[x - 1][y - 1].takeLast(1) &&
+            (board[x - 1][y - 1].startsWith(QUEEN) || board[x - 1][y - 1].startsWith(BISHOP))
         )
             return true
 
@@ -245,10 +240,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             y++
         }
 
-        if (x > 0 && y < 7 && player.player != board[x - 1][y + 1].takeLast(1) && (board[x - 1][y + 1].substring(
-                0,
-                1
-            ) == QUEEN || board[x - 1][y + 1].substring(0, 1) == BISHOP)
+        if (x > 0 && y < 7 && player.player != board[x - 1][y + 1].takeLast(1) &&
+            (board[x - 1][y + 1].startsWith(QUEEN) || board[x - 1][y + 1].startsWith(BISHOP))
         )
             return true
 
@@ -260,10 +253,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             x++
         }
 
-        if (x < 7 && player.player != board[x + 1][y].takeLast(1) && (board[x + 1][y].substring(
-                0,
-                1
-            ) == QUEEN || board[x + 1][y].substring(0, 1) == ROOK)
+        if (x < 7 && player.player != board[x + 1][y].takeLast(1) &&
+            (board[x + 1][y].startsWith(QUEEN) || board[x + 1][y].startsWith(ROOK))
         )
             return true
 
@@ -273,10 +264,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             x--
         }
 
-        if (x > 0 && player.player != board[x - 1][y].takeLast(1) && (board[x - 1][y].substring(
-                0,
-                1
-            ) == QUEEN || board[x - 1][y].substring(0, 1) == ROOK)
+        if (x > 0 && player.player != board[x - 1][y].takeLast(1) &&
+            (board[x - 1][y].startsWith(QUEEN) || board[x - 1][y].startsWith(ROOK))
         )
             return true
 
@@ -286,10 +275,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             y++
         }
 
-        if (y < 7 && player.player != board[x][y + 1].takeLast(1) && (board[x][y + 1].substring(
-                0,
-                1
-            ) == QUEEN || board[x][y + 1].substring(0, 1) == ROOK)
+        if (y < 7 && player.player != board[x][y + 1].takeLast(1) &&
+            (board[x][y + 1].startsWith(QUEEN) || board[x][y + 1].startsWith(ROOK))
         )
             return true
 
@@ -299,10 +286,8 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
             y--
         }
 
-        if (y > 0 && player.player != board[x][y - 1].takeLast(1) && (board[x][y - 1].substring(
-                0,
-                1
-            ) == QUEEN || board[x][y - 1].substring(0, 1) == ROOK)
+        if (y > 0 && player.player != board[x][y - 1].takeLast(1) &&
+            (board[x][y - 1].startsWith(QUEEN) || board[x][y - 1].startsWith(ROOK))
         )
             return true
 
@@ -310,110 +295,48 @@ class King(currentPoint: BoardSpace, player: Player): Piece(currentPoint, player
         y = currentPoint.y
 
         //Checks if an opponent king is in the way of the king.
-        if (x < 7 && y < 7 && player.player != board[x + 1][y + 1].takeLast(1) && board[x + 1][y + 1].substring(
-                0,
-                1
-            ) == KING
-        )
+        if (x < 7 && y < 7 && player.player != board[x + 1][y + 1].takeLast(1) && board[x + 1][y + 1].startsWith(KING))
             return true
-        if (x > 0 && y < 7 && player.player != board[x - 1][y + 1].takeLast(1) && board[x - 1][y + 1].substring(
-                0,
-                1
-            ) == KING
-        )
+        if (x > 0 && y < 7 && player.player != board[x - 1][y + 1].takeLast(1) && board[x - 1][y + 1].startsWith(KING))
             return true
-        if (x < 7 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) && board[x + 1][y - 1].substring(
-                0,
-                1
-            ) == KING
-        )
+        if (x < 7 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) && board[x + 1][y - 1].startsWith(KING))
             return true
-        if (x > 0 && y > 0 && player.player != board[x - 1][y - 1].takeLast(1) && board[x - 1][y - 1].substring(
-                0,
-                1
-            ) == KING
-        )
+        if (x > 0 && y > 0 && player.player != board[x - 1][y - 1].takeLast(1) && board[x - 1][y - 1].startsWith(KING))
             return true
-        if (x < 7 && player.player != board[x + 1][y].takeLast(1) && board[x + 1][y].substring(0, 1) == KING)
+        if (x < 7 && player.player != board[x + 1][y].takeLast(1) && board[x + 1][y].startsWith(KING))
             return true
-        if (x > 0 && player.player != board[x - 1][y].takeLast(1) && board[x - 1][y].substring(0, 1) == KING)
+        if (x > 0 && player.player != board[x - 1][y].takeLast(1) && board[x - 1][y].startsWith(KING))
             return true
-        if (y < 7 && player.player != board[x][y + 1].takeLast(1) && board[x][y + 1].substring(0, 1) == KING)
+        if (y < 7 && player.player != board[x][y + 1].takeLast(1) && board[x][y + 1].startsWith(KING))
             return true
-        if (y > 0 && player.player != board[x][y - 1].takeLast(1) && board[x][y - 1].substring(0, 1) == KING)
+        if (y > 0 && player.player != board[x][y - 1].takeLast(1) && board[x][y - 1].startsWith(KING))
             return true
 
         //Checks if knight is in the way of the king.
-        if (x < 7 && y < 6 && player.player != board[x + 1][y + 2].takeLast(1) && board[x + 1][y + 2].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x < 7 && y < 6 && player.player != board[x + 1][y + 2].takeLast(1) && board[x + 1][y + 2].startsWith(KNIGHT))
             return true
-        if (x > 0 && y < 6 && player.player != board[x - 1][y + 2].takeLast(1) && board[x - 1][y + 2].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x > 0 && y < 6 && player.player != board[x - 1][y + 2].takeLast(1) && board[x - 1][y + 2].startsWith(KNIGHT))
             return true
-        if (x < 6 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) && board[x + 1][y - 1].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x < 6 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) && board[x + 1][y - 1].startsWith(KNIGHT))
             return true
-        if (x < 6 && y < 7 && player.player != board[x + 2][y + 1].takeLast(1) && board[x + 2][y + 1].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x < 6 && y < 7 && player.player != board[x + 2][y + 1].takeLast(1) && board[x + 2][y + 1].startsWith(KNIGHT))
             return true
-        if (x < 7 && y > 1 && player.player != board[x + 1][y - 2].takeLast(1) && board[x + 1][y - 2].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x < 7 && y > 1 && player.player != board[x + 1][y - 2].takeLast(1) && board[x + 1][y - 2].startsWith(KNIGHT))
             return true
-        if (x > 0 && y > 1 && player.player != board[x - 1][y - 2].takeLast(1) && board[x - 1][y - 2].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x > 0 && y > 1 && player.player != board[x - 1][y - 2].takeLast(1) && board[x - 1][y - 2].startsWith(KNIGHT))
             return true
-        if (x > 1 && y > 0 && player.player != board[x - 2][y - 1].takeLast(1) && board[x - 2][y - 1].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x > 1 && y > 0 && player.player != board[x - 2][y - 1].takeLast(1) && board[x - 2][y - 1].startsWith(KNIGHT))
             return true
-        if (x > 1 && y < 7 && player.player != board[x - 2][y + 1].takeLast(1) && board[x - 2][y + 1].substring(
-                0,
-                1
-            ) == KNIGHT
-        )
+        if (x > 1 && y < 7 && player.player != board[x - 2][y + 1].takeLast(1) && board[x - 2][y + 1].startsWith(KNIGHT))
             return true
 
         //Checks if pawn is in the way of the king.
         return if (player.player == PLAYER_1) {
-            if (x > 0 && y > 0 && player.player != board[x - 1][y - 1].takeLast(1) && board[x - 1][y - 1].substring(
-                    0,
-                    1
-                ) == PAWN
-            ) true
-            else (x > 0 && y < 7 && player.player != board[x - 1][y + 1].takeLast(1) && board[x - 1][y + 1].substring(
-                0,
-                1
-            ) == PAWN)
+            if (x > 0 && y > 0 && player.player != board[x - 1][y - 1].takeLast(1) && board[x - 1][y - 1].startsWith(PAWN)) true
+            else (x > 0 && y < 7 && player.player != board[x - 1][y + 1].takeLast(1) && board[x - 1][y + 1].startsWith(PAWN))
         } else {
-            if (x < 7 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) && board[x + 1][y - 1].substring(
-                    0,
-                    1
-                ) == PAWN
-            ) true
-            else (x < 7 && y < 7 && player.player != board[x + 1][y + 1].takeLast(1) && board[x + 1][y + 1].substring(
-                0,
-                1
-            ) == PAWN)
+            if (x < 7 && y > 0 && player.player != board[x + 1][y - 1].takeLast(1) && board[x + 1][y - 1].startsWith(PAWN)) true
+            else (x < 7 && y < 7 && player.player != board[x + 1][y + 1].takeLast(1) && board[x + 1][y + 1].startsWith(PAWN))
         }
     }
 }

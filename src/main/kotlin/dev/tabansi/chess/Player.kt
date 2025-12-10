@@ -78,8 +78,9 @@ class Player(val player: String) {
 
     fun revivePiece(piece: Piece) {
         for (i in 0 until 16) {
-            if (pieces[i]!!.active && pieces[i] == piece) {
-                pieces[i]!!.active = true
+            val p = pieces[i]
+            if (p != null && p == piece) {
+                p.active = true
                 break
             }
         }

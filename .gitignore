@@ -19,3 +19,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Project notes that should never be committed
+/src/main/kotlin/dev/tabansi/chess/TODO.txt

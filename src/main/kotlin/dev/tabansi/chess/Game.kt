@@ -16,6 +16,7 @@ class Game {
     private val player1 = Player(PLAYER_1)
     private val player2 = Player(PLAYER_2)
     private var currentPiece: Piece? = null
+    private var lastMovedPiece: Piece? = null
     private var lastKilledPiece: Piece? = null
     private var castled = false
 
@@ -106,7 +107,7 @@ class Game {
                     continue
                 }
                 if (destInput == "undo") {
-                    turnsSinceUndo = 0
+                    undo()
                     continue
                 }
 
@@ -121,6 +122,7 @@ class Game {
 
                 if (!isEmptySpace(x, y)) {
                     currentPiece!!.doMove(BoardSpace(x, y))
+                    lastMovedPiece = currentPiece
                     if (turnTracker % 2 == 0) {
                         lastKilledPiece = player2.getPiece(BoardSpace(x, y))
                         player2.killPiece(lastKilledPiece)
@@ -135,9 +137,11 @@ class Game {
                             promotePawn(x, y, player2)
                     }
                     turnTracker++
+                    turnsSinceUndo++
                 } else {
                     lastKilledPiece = null
                     currentPiece!!.doMove(BoardSpace(x, y))
+                    lastMovedPiece = currentPiece
                     castled = false
 
                     if (currentPiece is King) {
@@ -257,24 +261,34 @@ class Game {
     }
 
     private fun undo() {
-        if (turnTracker <= 0)
+        if (turnTracker <= 0) {
             println("You can't undo right now. Please enter a valid coordinate.")
+            return
+        }
 
-        if (turnsSinceUndo == 0)
+        if (turnsSinceUndo == 0) {
             println("\n\nYou can only undo once!\n")
+            return
+        }
+
+        val pieceToUndo = lastMovedPiece
+        if (pieceToUndo == null) {
+            println("No move to undo.")
+            return
+        }
 
         if (lastKilledPiece != null) {
             if (turnTracker % 2 == 0) {
-                currentPiece!!.undoMove(lastKilledPiece!!.pieceConstant + player1.player)
+                pieceToUndo.undoMove(lastKilledPiece!!.pieceConstant + player1.player)
                 player1.revivePiece(lastKilledPiece!!)
             } else {
-                currentPiece!!.undoMove(lastKilledPiece!!.pieceConstant + player2.player)
+                pieceToUndo.undoMove(lastKilledPiece!!.pieceConstant + player2.player)
                 player2.revivePiece(lastKilledPiece!!)
             }
         } else {
-            currentPiece!!.undoMove(EMPTY)
-            if (currentPiece is King) (currentPiece as King).hasMoved = false
-            if (currentPiece is Rook) (currentPiece as Rook).hasMoved = false
+            pieceToUndo.undoMove(EMPTY)
+            if (pieceToUndo is King) (pieceToUndo as King).hasMoved = false
+            if (pieceToUndo is Rook) (pieceToUndo as Rook).hasMoved = false
 
             if (castled) {
                 if (turnTracker % 2 == 1) {
@@ -287,11 +301,11 @@ class Game {
                     }
                 } else {
                     if (board[0][5] == ROOK + PLAYER_2) {
-                        (player1.getPiece(BoardSpace(0, 5)) as Rook).hasMoved = false
-                        (player1.getPiece(BoardSpace(0, 5)) as Rook).undoMove(EMPTY)
+                        (player2.getPiece(BoardSpace(0, 5)) as Rook).hasMoved = false
+                        (player2.getPiece(BoardSpace(0, 5)) as Rook).undoMove(EMPTY)
                     } else if (board[0][3] == ROOK + PLAYER_2) {
-                        (player1.getPiece(BoardSpace(0, 3)) as Rook).hasMoved = false
-                        (player1.getPiece(BoardSpace(0, 3)) as Rook).undoMove(EMPTY)
+                        (player2.getPiece(BoardSpace(0, 3)) as Rook).hasMoved = false
+                        (player2.getPiece(BoardSpace(0, 3)) as Rook).undoMove(EMPTY)
                     }
                 }
             }
