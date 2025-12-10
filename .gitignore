@@ -3,7 +3,11 @@
 build/
 
 # IntelliJ / IDEA
-# Keep project files, but ignore volatile ones if added
+# Prefer ignoring the entire IDE project dir and module files
+.idea/
+*.iml
+
+# (Legacy) Specific volatile files (kept for clarity; covered by .idea/ above)
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/usage.statistics.xml
