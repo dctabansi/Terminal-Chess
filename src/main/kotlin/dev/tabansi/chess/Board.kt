@@ -71,7 +71,7 @@ object Board {
             row--
             println()
         }
-        println("\t a\t     b\t     c\t     d\t     e\t     F\t     g\t     h\n\n")
+        println("\t a\t     b\t     c\t     d\t     e\t     f\t     g\t     h\n\n")
     }
 
     private fun printLegend(row: Int) {

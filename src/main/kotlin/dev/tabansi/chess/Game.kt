@@ -192,20 +192,31 @@ class Game {
                 println("\n\nCheck!!!")
             displayBoard()
         }
-        println(
-            if (turnTracker % 2 == 0)
-                "\nPlayer Two has won!!!"
-            else
-                "\nPlayer One has won!!!"
-        )
+        if (gameOver()) {
+            println(
+                if (turnTracker % 2 == 0)
+                    "\nPlayer Two has won!!!"
+                else
+                    "\nPlayer One has won!!!"
+            )
+        } else {
+            println("\nStalemate. It's a draw.")
+        }
     }
 
     private fun gameOver(): Boolean {
         val currentPlayer = if (turnTracker % 2 == 0) player1 else player2
-        return currentPlayer.getMoves().isEmpty()
+        val noMoves = currentPlayer.getMoves().isEmpty()
+        if (!noMoves) return false
+        return currentPlayer.king.isInCheck()
     }
 
-    private fun stalemate(): Boolean = player1.getMoves().isEmpty() && player2.getMoves().isEmpty()
+    private fun stalemate(): Boolean {
+        val currentPlayer = if (turnTracker % 2 == 0) player1 else player2
+        val noMoves = currentPlayer.getMoves().isEmpty()
+        if (!noMoves) return false
+        return !currentPlayer.king.isInCheck()
+    }
 
     private fun confirmInput(input: String): Boolean {
         if (input == "undo") return true
@@ -214,17 +225,7 @@ class Game {
         return true
     }
 
-    private fun labelToCoord(label: String): Pair<Int, Int> {
-        val col = label[0].code - 'a'.code
-        val row = 8 - label[1].toString().toInt()
-        return Pair(row, col)
-    }
-
-    private fun coordToLabel(x: Int, y: Int): String {
-        val col = (y + 'a'.code).toChar()
-        val row = 8 - x
-        return "$col$row".uppercase()
-    }
+    // Coordinate helpers are defined once at top-level in dev.tabansi.chess.Main.kt
 
     private fun promotePawn(x: Int, y: Int, player: Player) {
         val options = mapOf(
